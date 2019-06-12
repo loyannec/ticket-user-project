@@ -23,8 +23,8 @@ export class Dashboard extends React.Component {
             <div>
                 <nav>
                     <Link to="/dashboard/ticket" className="nav-link">Tickets</Link>
-                    <Link to="/dashboard/ticket/create" className="nav-link">Create Ticket</Link>
-                    <Link onClick={this.disconnect} to="#" className="nav-link">Disconnect</Link>
+                    <Link to="/dashboard/ticket/create" className="nav-link">Créer Ticket</Link>
+                    <Link onClick={this.disconnect} to="#" className="nav-link">Me déconnecter</Link>
                 </nav>
                 <Switch>
                     <Route exact path="/dashboard" component={TicketsList} />

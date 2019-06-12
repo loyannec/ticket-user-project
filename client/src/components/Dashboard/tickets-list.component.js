@@ -33,24 +33,22 @@ export default class TodosList extends Component {
 	render() {
 		return (
 			<div>
-				<h1>Tickets List</h1>
+				<h1>Liste des tickets</h1>
                 <table>
                     <thead>
                         <tr>
                             <th className="idTicket">Tichet ID</th>
-                            <th className="showTicket">Show Ticket</th>
-                            <th className="editTicket">Edit Ticket</th>
+                            <th className="showTicket">Voir Ticket</th>
+                            <th className="editTicket">Editer Ticket</th>
                         </tr>
                     </thead>
                     <tbody>
                         {this.state.tickets.map( (ticket, index) => {
-                            console.log("plop");
-                            console.log(this.state.tickets);
                             return (
                                 <tr key={index}>
                                     <td>{ticket._id}</td>
-                                    <td><Link to={`/dashboard/ticket/${ticket._id}`} className="nav-link">Show</Link></td>
-                                    <td><Link to={`/dashboard/ticket/${ticket._id}/edit`} className="nav-link">Edit</Link></td>
+                                    <td><Link to={`/dashboard/ticket/${ticket._id}`} className="nav-link">Voir</Link></td>
+                                    <td><Link to={`/dashboard/ticket/${ticket._id}/edit`} className="nav-link">Editer</Link></td>
                                 </tr>
                             )
                         })}

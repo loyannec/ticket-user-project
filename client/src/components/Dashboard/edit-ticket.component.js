@@ -111,7 +111,7 @@ export default class EditTicket extends Component {
 	render() {
 		return (
 			<div style={{marginTop: 10}}>
-				<h3>Edit Ticket n°{this.state.ticket_id}</h3>
+				<h3>Editer Ticket n°{this.state.ticket_id}</h3>
 				<form onSubmit={this.onSubmit}>
 					<div className="form-group">
 						<label>Titre: </label>

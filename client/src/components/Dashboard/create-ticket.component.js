@@ -82,7 +82,7 @@ export default class CreateTicket extends Component {
 	render() {
 		return (
 			<div style={{marginTop: 10}}>
-				<h3>Create New Ticket</h3>
+				<h3>Créer un nouveau ticket</h3>
 				<form onSubmit={this.onSubmit}>
 					<div className="form-group">
 						<label>Titre: </label>
@@ -124,7 +124,7 @@ export default class CreateTicket extends Component {
 							checked={this.state.ticket_priority==='Low'} 
 							onChange={this.onChangeTicketPriority}
 							/>
-							<label className="form-check-label">Low</label>
+							<label className="form-check-label">Basse</label>
 						</div>
 
 						<div className="form-check form-check-inline">
@@ -136,7 +136,7 @@ export default class CreateTicket extends Component {
 							checked={this.state.ticket_priority==='Medium'} 
 							onChange={this.onChangeTicketPriority}
 							/>
-							<label className="form-check-label">Medium</label>
+							<label className="form-check-label">Moyen</label>
 						</div>
 
 						<div className="form-check form-check-inline">
@@ -148,7 +148,7 @@ export default class CreateTicket extends Component {
 							checked={this.state.ticket_priority==='High'} 
 							onChange={this.onChangeTicketPriority}
 							/>
-							<label className="form-check-label">High</label>
+							<label className="form-check-label">Haute</label>
 						</div>
 					</div>
 

@@ -51,7 +51,7 @@ export class Login extends React.Component {
                 </div>
 
                 <div className="form-group" controlId="password">
-                    <label>Password</label>
+                    <label>Mot de passe</label>
                     <input value={this.state.password} onChange={this.handleChange} type="password" id="password"/>
                 </div>
                 

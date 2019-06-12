@@ -57,12 +57,12 @@ export class Signup extends React.Component {
                 </div>
 
                 <div className="form-group">
-                    <label>Password</label>
+                    <label>Mot de passe</label>
                     <input value={this.state.password} onChange={this.handleChange} type="password" id="password"/>
                 </div>
 
                 <div className="form-group">
-                    <label>Confirm Password</label>
+                    <label>Confirmer mot de passe</label>
                     <input value={this.state.cpassword} onChange={this.handleChange} type="password" id="cpassword"/>
                 </div>
                 

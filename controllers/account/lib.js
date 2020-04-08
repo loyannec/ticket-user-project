@@ -36,10 +36,8 @@ function signup(req, res) {
                         "text": "Erreur interne"
                     })
                 } else {
-                    res.status(200).json({
-                        "text": "Succès",
-                        "token": user.getToken()
-                    })
+                    req.session.token = user.getToken();
+                    res.redirect('../../ticket/');
                 }
             })
         }, function (error) {
@@ -61,6 +59,10 @@ function signup(req, res) {
             }
         })
     }
+}
+
+function signupForm(req, res) {
+    res.status(200).render('account/signup', {title: 'Inscription'});
 }
 
 function login(req, res) {
@@ -85,10 +87,8 @@ function login(req, res) {
             }
             else {
                 if (user.authenticate(req.body.password)) {
-                    res.status(200).json({
-                        "token": user.getToken(),
-                        "text": "Authentification réussi"
-                    })
+                    req.session.token = user.getToken();
+                    res.redirect('../../ticket/');
                 }
                 else{
                     res.status(401).json({
@@ -100,5 +100,17 @@ function login(req, res) {
     }
 }
 
+function loginForm(req, res) {
+    res.status(200).render('account/login', {title: 'Connexion'});
+}
+
+function signout(req, res) {
+    delete req.session.token;
+    res.redirect('login');
+}
+
 exports.login = login;
+exports.loginForm = loginForm;
 exports.signup = signup;
+exports.signupForm = signupForm;
+exports.signout = signout;

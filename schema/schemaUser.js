@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const jwt = require('jwt-simple');
+const jwt = require('jsonwebtoken');
 const config = require('../config/config');
 
 var userSchema = mongoose.Schema({
@@ -22,7 +22,7 @@ userSchema.methods = {
 		return password === this.password;
 	},
 	getToken: function () {
-		return jwt.encode(this, config.secret);
+		return jwt.sign({email: this.email}, config.secret, {expiresIn: '1d'});
 	}
 }
 

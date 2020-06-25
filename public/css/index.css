@@ -12,7 +12,7 @@ thead > tr > th {
 	width: 300px;
 }
 
-.showTicket, .editTicket {
+.status {
 	width: 150px;
 }
 

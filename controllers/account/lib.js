@@ -1,16 +1,23 @@
 const User = require('../../schema/schemaUser.js');
+const crypto = require('crypto');
 
 function signup(req, res) {
+    console.log("**********Inside signup method************")
     if (!req.body.email || !req.body.password) {
         //Le cas où l'email ou bien le password ne serait pas soumit ou nul
+        //The case where the email or the password is not submitted or null
         console.log(req.body);
         res.status(400).json({
+            //Request invalid
             "text": "Requête invalide"
         })
     } else {
+        const sha256 = crypto.createHash('sha256');
+        const hashedPassword = sha256.update(req.body.password).digest('base64');
         var user = {
             email: req.body.email,
-            password: req.body.password
+            password: hashedPassword,
+            isAdmin:false
         }
         var findUser = new Promise(function (resolve, reject) {
             User.findOne({
@@ -62,10 +69,12 @@ function signup(req, res) {
 }
 
 function signupForm(req, res) {
+    console.log("**********Inside signupForm method************")
     res.status(200).render('account/signup', {title: 'Inscription'});
 }
 
 function login(req, res) {
+    console.log("**********Inside login method************")
     if (!req.body.email || !req.body.password) {
         //Le cas où l'email ou bien le password ne serait pas soumit ou nul
         res.status(400).json({
@@ -86,9 +95,21 @@ function login(req, res) {
                 })
             }
             else {
-                if (user.authenticate(req.body.password)) {
+                const sha256 = crypto.createHash('sha256');
+                const hashedPassword = sha256.update(req.body.password).digest('base64');
+                if (user.authenticate(hashedPassword)) {
+                    console.log("******after getting token for user********")
                     req.session.token = user.getToken();
                     res.redirect('../../ticket/');
+                    /* if(user.checkAdmin()){
+                        console.log("******User is admin")
+                        res.locals.isAdmin = true;
+                        res.redirect('../../ticket/');
+                    }else{
+                        console.log("******User is normal user")
+                        res.redirect('../../ticket/');
+                    } */
+                    
                 }
                 else{
                     res.status(401).json({
@@ -101,10 +122,12 @@ function login(req, res) {
 }
 
 function loginForm(req, res) {
+    console.log("**********Inside loginForm method************")
     res.status(200).render('account/login', {title: 'Connexion'});
 }
 
 function signout(req, res) {
+    console.log("**********Inside signout method************")
     delete req.session.token;
     res.redirect('login');
 }

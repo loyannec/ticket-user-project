@@ -1,7 +1,8 @@
 const Ticket = require('../../schema/schemaTicket.js');
-
+const User = require('../../schema/schemaUser.js');
 function create(req, res) {
-	if (!req.body.description || !req.body.responsible || !req.body.priority) {
+	console.log("**********Inside create method************")
+	if (!req.body.description || !req.body.priority || !req.user.email) {
 		res.status(400).json({
 			"text": "Requête invalide"
 		})
@@ -9,8 +10,10 @@ function create(req, res) {
 		var ticket = {
 			title: req.body.title,
 			description: req.body.description,
-			responsible: req.body.responsible,
-			priority: req.body.priority
+			/* responsible: req.body.responsible, */
+			priority: req.body.priority,
+			createdBy:req.user.email,
+			isValidated: false //updated for admin functionality
 		}
 
 		var _t = new Ticket(ticket);
@@ -27,10 +30,12 @@ function create(req, res) {
 }
 
 function createForm(req, res) {
+	console.log("**********Inside createForm method************")
 	res.status(200).render('ticket/create', {title: 'Créer ticket'});
 }
 
 function show(req, res) {
+	console.log("**********Inside show method************")
 	if (!req.params.id) {
 		res.status(400).json({
 			"text": "Requête invalide"
@@ -51,7 +56,7 @@ function show(req, res) {
 		})
 
 		findTicket.then(function (ticket) {
-			res.status(200).render('ticket/show', {title: `Ticket n°${ticket._id}`, ticket});
+			res.status(200).render('ticket/show', {title: `Ticket ${ticket.title}`, ticket,});
 		}, function (error) {
 			switch (error) {
 				case 500:
@@ -74,6 +79,7 @@ function show(req, res) {
 }
 
 function edit(req, res) {
+	console.log("**********Inside edit method************")
 	if (!req.params.id) {
 		res.status(400).json({
 			"text": "Requête invalide"
@@ -116,7 +122,14 @@ function edit(req, res) {
 	}
 }
 
+
+function showbuttons(req, res) {
+	console.log("**********Inside showbuttons method************")
+	if (req.user.isAdmin){} 
+}
+
 function update(req, res) {
+	console.log("**********Inside update method************")
 	console.log(req.body);
 	if (!req.params.id || !req.body.description || !req.body.responsible || !req.body.priority) {
 		res.status(400).json({
@@ -162,7 +175,8 @@ function update(req, res) {
 	}
 }
 
-function list(req, res) {
+/* function list(req, res) {
+	console.log("**********Inside list method************"+JSON.stringify(req.user.email))
 	var findTicket = new Promise(function (resolve, reject) {
 		Ticket.find({}, function (err, tickets) {
 			if (err) {
@@ -198,6 +212,144 @@ function list(req, res) {
 		}
 	})
 }
+ */
+
+
+
+
+
+
+
+
+
+function list(req, res) {
+	console.log("**********Inside list method************"+JSON.stringify(req.user.email))
+	var checkUser=new Promise(function(resolve,reject){
+		User.find({email:req.user.email},function(err,user){
+			if (err) {
+				reject(500);
+			} else {
+				if (user) {
+					resolve(user)
+				} else {
+					reject(200)
+				}
+			}
+		})
+	})
+
+	checkUser.then(function (user) {
+		console.log("********"+JSON.stringify(user)+user[0].isAdmin)
+		/* if (user[0].isAdmin){ */
+		//	console.log("************USER ADMIN USER")
+			var findTicket = new Promise(function (resolve, reject) {
+				Ticket.find({}, function (err, tickets) {
+					if (err) {
+						reject(500);
+					} else {
+						if (tickets) {
+							resolve(tickets)
+						} else {
+							reject(200)
+						}
+					}
+				})
+			})
+		
+			findTicket.then(function (tickets) {
+				res.status(200).render('ticket/index', {title: 'Liste des tickets', tickets,user});
+			}, function (error) {
+				switch (error) {
+					case 500:
+						res.status(500).json({
+							"text": "Erreur interne"
+						})
+						break;
+					case 200:
+						res.status(200).json({
+							"text": "Il n'y a pas encore de ticket"
+						})
+						break;
+					default:
+						res.status(500).json({
+							"text": "Erreur interne"
+						})
+				}
+			})
+		/* }else{
+			console.log("************USER NORMAL USER")
+			var findTicket = new Promise(function (resolve, reject) {
+				Ticket.find({isValidated:true}, function (err, tickets) {
+					if (err) {
+						reject(500);
+					} else {
+						if (tickets) {
+							resolve(tickets)
+						} else {
+							reject(200)
+						}
+					}
+				})
+			})
+		
+			findTicket.then(function (tickets) {
+				res.status(200).render('ticket/index', {title: 'Liste des tickets', tickets,user});
+			}, function (error) {
+				switch (error) {
+					case 500:
+						res.status(500).json({
+							"text": "Erreur interne"
+						})
+						break;
+					case 200:
+						res.status(200).json({
+							"text": "Il n'y a pas encore de ticket"
+						})
+						break;
+					default:
+						res.status(500).json({
+							"text": "Erreur interne"
+						})
+				}
+			})
+		}
+ */
+	},function (error) {
+		switch (error) {
+			case 500:
+				res.status(500).json({
+					"text": "Erreur interne"
+				})
+				break;
+			case 200:
+				res.status(200).json({
+					"text": "Il n'y a pas encore de ticket"
+				})
+				break;
+			default:
+				res.status(500).json({
+					"text": "Erreur interne"
+				})
+		}
+	})
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 exports.create = create;
 exports.createForm = createForm;

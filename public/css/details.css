@@ -7,3 +7,8 @@
 	margin-left: 0;
 	text-align: left;
 }
+
+.comments-list {
+	display: flex;
+	flex-flow: column;
+}

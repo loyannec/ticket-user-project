@@ -13,7 +13,11 @@ var userSchema = mongoose.Schema({
 	password: {
         type: String,
         required: true
-    }
+	},
+	isAdmin: {
+		type:Boolean,
+		required:false,
+	} 
 },{ timestamps: { createdAt: 'created_at' }})
 
 
@@ -23,6 +27,15 @@ userSchema.methods = {
 	},
 	getToken: function () {
 		return jwt.sign({email: this.email}, config.secret, {expiresIn: '1d'});
+	},
+	checkAdmin: function(){
+		console.log("***********inside checkadmin function")
+		if(this.isAdmin){
+			return true;
+		}
+		else{
+			return false;
+		}
 	}
 }
 

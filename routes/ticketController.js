@@ -1,3 +1,4 @@
+const User = require('../schema/schemaUser');
 const ticket = require('../controllers/ticket/lib.js');
 const express = require('express');
 const router = express.Router();
@@ -15,8 +16,14 @@ const authenticateJWT = (req, res, next) => {
                 return res.status(200).render('account/login', {title: 'Connexion'});
             }
 
-            req.user = user;
-            next();
+            // Find user by email
+            User.findOne({ email: user.email }, (err, user) => {
+                if (err) {
+                    return res.status(200).render('account/login', {title: 'Connexion'});
+                }
+                req.user = user;
+                next();
+            });
         });
     } else {
         res.status(200).render('account/login', {title: 'Connexion'});
@@ -28,6 +35,7 @@ router.post('/create', authenticateJWT, ticket.create);
 router.get('/:id', authenticateJWT, ticket.show);
 router.get('/:id/edit', authenticateJWT, ticket.edit);
 router.post('/:id/update', authenticateJWT, ticket.update);
+router.post('/:id/comment', authenticateJWT, ticket.addComment);
 router.get('/', authenticateJWT, ticket.list);
 
 module.exports = router;

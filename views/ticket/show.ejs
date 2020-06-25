@@ -10,7 +10,18 @@
             <h2>Description : <%= ticket.description %></h2>
             <h2>Responsable : <%= ticket.responsible %></h2>
             <h2>Priorité : <%= ticket.priority %></h2>
-            <h2>Statut : <%= ticket.completed ? "Résolu" : "En cours" %></h2>
+            <h2>créé par : <%= ticket.createdBy %></h2>
+            <h2>Comments:</h2>
+            <div id="previous-comments" class="comments-list">
+                <% ticket.comments.forEach(comment => { %>
+                    <%- include('comment', { comment }) %>
+                <% }); %>
+            </div>
+            <h2>Statut : <%= ticket.completed ? "completed" : "Open" %></h2>
+
+            <div>
+                Add comment: <input type="text" id="commentInput"><input type="button" id="addCommentButton" value="add">
+            </div>
         </div>
     </body>
 </html>

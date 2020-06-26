@@ -34,9 +34,7 @@ var ticketSchema = mongoose.Schema({
         type: Array,
         default:[]
     }
-
 },{ timestamps: { createdAt: 'created_at' }})
-
 
 ticketSchema.methods = {
 	getId: function () {

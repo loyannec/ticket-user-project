@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <%- include('../shared/head', {css: ['index', 'navbar']}) %>
+    <body>
+        <%- include('../shared/navbar', {}) %>
+        <div>
+            <h1>Liste des tickets</h1>
+            <table>
+                <thead>
+                    <tr>
+                        <th class="idTicket">Tichet Title</th>
+                        <th class="idTicket">Tichet status</th>
+                        <th class="status">Status</th>
+                        <th class="status">Assigned to</th>
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                    <% for (index = 0; index < tickets.length; index++) { %>
+                        <% const ticket = tickets[index] %>
+                        <tr key={index}>
+                            <td><%= ticket.title %></td>
+                             <!-- <td><% if(ticket.completed){ %><img src="/images/completed.png" style="width:20px;" alt="true"><% }else { %><img src="/images/open.jpg" style="width:40px;" alt="false"><% } %></td> -->
+                            <!-- <td><% if(ticket.isValidated){ %><a href="/ticket/<%= ticket._id %>" class="nav-link">Voir</a><% }else{ %><a href="/ticket/<%= ticket._id %>/edit" class="nav-link">Editer</a><% } %></td> -->
+                            <!-- <td><% if(user[0].isAdmin){ %><a href="/ticket/approve<%= ticket._id %>" class="nav-link"><button>Approve</button></a><% }else{ %>Pending for approval<% } %></td> -->
+                            <!-- <td><% if(ticket.responsible){ %><%= ticket.responsible %><% }else { %>None</td> -->
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </body>
+</html>

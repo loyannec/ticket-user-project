@@ -10,7 +10,6 @@ function create(req, res) {
 		var ticket = {
 			title: req.body.title,
 			description: req.body.description,
-			/* responsible: req.body.responsible, */
 			priority: req.body.priority,
 			createdBy:req.user.email,
 			isValidated: false //updated for admin functionality
@@ -123,15 +122,10 @@ function edit(req, res) {
 }
 
 
-function showbuttons(req, res) {
-	console.log("**********Inside showbuttons method************")
-	if (req.user.isAdmin){} 
-}
-
 function update(req, res) {
 	console.log("**********Inside update method************")
 	console.log(req.body);
-	if (!req.params.id || !req.body.description || !req.body.responsible || !req.body.priority) {
+	if (!req.params.id || !req.body.description || !req.body.priority) {
 		res.status(400).json({
 			"text": "Requête invalide"
 		})
@@ -175,52 +169,6 @@ function update(req, res) {
 	}
 }
 
-/* function list(req, res) {
-	console.log("**********Inside list method************"+JSON.stringify(req.user.email))
-	var findTicket = new Promise(function (resolve, reject) {
-		Ticket.find({}, function (err, tickets) {
-			if (err) {
-				reject(500);
-			} else {
-				if (tickets) {
-					resolve(tickets)
-				} else {
-					reject(200)
-				}
-			}
-		})
-	})
-
-	findTicket.then(function (tickets) {
-		res.status(200).render('ticket/index', {title: 'Liste des tickets', tickets});
-	}, function (error) {
-		switch (error) {
-			case 500:
-				res.status(500).json({
-					"text": "Erreur interne"
-				})
-				break;
-			case 200:
-				res.status(200).json({
-					"text": "Il n'y a pas encore de ticket"
-				})
-				break;
-			default:
-				res.status(500).json({
-					"text": "Erreur interne"
-				})
-		}
-	})
-}
- */
-
-
-
-
-
-
-
-
 
 function list(req, res) {
 	console.log("**********Inside list method************"+JSON.stringify(req.user.email))
@@ -240,8 +188,6 @@ function list(req, res) {
 
 	checkUser.then(function (user) {
 		console.log("********"+JSON.stringify(user)+user[0].isAdmin)
-		/* if (user[0].isAdmin){ */
-		//	console.log("************USER ADMIN USER")
 			var findTicket = new Promise(function (resolve, reject) {
 				Ticket.find({}, function (err, tickets) {
 					if (err) {
@@ -257,43 +203,43 @@ function list(req, res) {
 			})
 		
 			findTicket.then(function (tickets) {
-				res.status(200).render('ticket/index', {title: 'Liste des tickets', tickets,user});
-			}, function (error) {
-				switch (error) {
-					case 500:
-						res.status(500).json({
-							"text": "Erreur interne"
-						})
-						break;
-					case 200:
-						res.status(200).json({
-							"text": "Il n'y a pas encore de ticket"
-						})
-						break;
-					default:
-						res.status(500).json({
-							"text": "Erreur interne"
-						})
-				}
-			})
-		/* }else{
-			console.log("************USER NORMAL USER")
-			var findTicket = new Promise(function (resolve, reject) {
-				Ticket.find({isValidated:true}, function (err, tickets) {
-					if (err) {
-						reject(500);
-					} else {
-						if (tickets) {
-							resolve(tickets)
+				console.log("****Retrieve username values from database****")
+				var userNames = new Promise(function (resolve, reject) {
+					User.find({isAdmin:false},{name:1,_id:0}, (err, usernames) => {
+						if (err) {
+							reject(500);
 						} else {
-							reject(200)
+							if (usernames) {
+								resolve(usernames)
+							} else {
+								reject(200)
+							}
 						}
+					})
+				});
+				userNames.then(function (usernames) {
+					console.log("******Tickets value**********"+JSON.stringify(tickets))
+					console.log("******usernames value**********"+JSON.stringify(usernames))
+					console.log("******user value**********"+JSON.stringify(user))
+					res.status(200).render('ticket/index', {title: 'Liste des tickets', tickets,usernames,user});
+				}, function (error) {
+					switch (error) {
+						case 500:
+							res.status(500).json({
+								"text": "Erreur interne"
+							})
+							break;
+						case 200:
+							res.status(200).json({
+								"text": "Username doesnot exist"
+							})
+							break;
+						default:
+							res.status(500).json({
+								"text": "Erreur interne"
+							})
 					}
 				})
-			})
-		
-			findTicket.then(function (tickets) {
-				res.status(200).render('ticket/index', {title: 'Liste des tickets', tickets,user});
 			}, function (error) {
 				switch (error) {
 					case 500:
@@ -312,8 +258,6 @@ function list(req, res) {
 						})
 				}
 			})
-		}
- */
 	},function (error) {
 		switch (error) {
 			case 500:
@@ -334,26 +278,50 @@ function list(req, res) {
 	})
 }
 
+function assign(req, res) {
+	console.log("**********Inside assign method************")
+	console.log(req.body);
+		var findTicket = new Promise(function (resolve, reject) {
+			Ticket.findByIdAndUpdate(req.params.id, req.body, function (err, result) {
+				if (err) {
+					reject(500);
+				} else {
+					if (result) {
+						resolve(result)
+					} else {
+						reject(200)
+					}
+				}
+			})
+		})
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+		findTicket.then(function (ticket) {
+			res.redirect('/ticket/')
+		}, function (error) {
+			switch (error) {
+				case 500:
+					res.status(500).json({
+						"text": "Erreur interne"
+					})
+					break;
+				case 200:
+					res.status(200).json({
+						"text": "Le ticket n'existe pas"
+					})
+					break;
+				default:
+					res.status(500).json({
+						"text": "Erreur interne"
+					})
+			}
+		})
+	 
+}
 
 exports.create = create;
 exports.createForm = createForm;
 exports.show = show;
 exports.edit = edit;
 exports.update = update;
+exports.assign = assign;
 exports.list = list;

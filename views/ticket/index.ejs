@@ -11,7 +11,7 @@
                         <th class="idTicket">Tichet Title</th>
                         <th class="status">Tichet Ststus</th>
                         <th class="showTicket">Assigned </th>
-                        <th class="showTicket">Voir Ticket</th>
+                        <th class="showTicket">Voir/Edit Ticket</th>
                         <!-- <th class="editTicket">Editer Ticket</th> -->
                     </tr>
                 </thead>
@@ -26,20 +26,35 @@
                                     <% if(ticket.responsible){ %>
                                         <%= ticket.responsible %>
                                     <% }else{ %>
-                                        <a href="/ticket/approve<%= ticket._id %>" class="nav-link"><button>Approve</button></a>
+                                        <form method="POST" action="/ticket/<%= ticket._id %>/assign">
+                                            <select name="responsible" id="responsible">
+                                                <% for (i = 0; i < usernames.length; i++) { %>
+                                                    <% const userName = usernames[i] %>
+                                                        <option value=<%= userName.name %>><%= userName.name %></option>
+                                                <% } %>
+                                            </select>
+                                            <button type="submit">Assign</button>
+                                        </form>
                                     <% } %>
                                 <% }else{ %>
                                     <% if(ticket.responsible){ %>
                                         <%= ticket.responsible %>
                                     <% }else{ %>
-                                        Pending 
+                                         Hanging
                                     <% } %>
                                 <% } %>
                                 
                                    
                             </td>
-                            <td><a href="/ticket/<%= ticket._id %>" class="nav-link">Voir</a></td>
-                            <<!-- td><a href="/ticket/<%= ticket._id %>/edit" class="nav-link">Editer</a></td> -->
+
+                            <td>
+                                <% if(ticket.responsible == user[0].name){ %>
+                                    <a href="/ticket/<%= ticket._id %>/edit" class="nav-link">Editer</a>
+                                <% }else{ %>
+                                    <a href="/ticket/<%= ticket._id %>" class="nav-link">Voir</a>
+                                <% } %>
+                            </td>
+                            <!-- td></td> -->
                         </tr>
                     <% } %>
                 </tbody>

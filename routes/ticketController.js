@@ -7,6 +7,7 @@ const jwt = require('jsonwebtoken');
 const config = require('../config/config');
 
 const authenticateJWT = (req, res, next) => {
+    console.log("********authenticateJWT********")
     const token = req.session.token;
 
     if (token) {
@@ -15,12 +16,12 @@ const authenticateJWT = (req, res, next) => {
             if (err) {
                 return res.status(200).render('account/login', {title: 'Connexion'});
             }
-
             // Find user by email
             User.findOne({ email: user.email }, (err, user) => {
                 if (err) {
                     return res.status(200).render('account/login', {title: 'Connexion'});
                 }
+                console.log("Value of the user in authenticate method is :"+JSON.stringify(user));
                 req.user = user;
                 next();
             });
@@ -36,6 +37,7 @@ router.get('/:id', authenticateJWT, ticket.show);
 router.get('/:id/edit', authenticateJWT, ticket.edit);
 router.post('/:id/update', authenticateJWT, ticket.update);
 router.post('/:id/comment', authenticateJWT, ticket.addComment);
+router.post('/:id/assign', authenticateJWT, ticket.assign);
 router.get('/', authenticateJWT, ticket.list);
 
 module.exports = router;

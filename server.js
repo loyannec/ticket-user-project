@@ -1,17 +1,17 @@
 //Définition des modules
-const express = require("express"); 
-const mongoose = require("mongoose"); 
+const express = require("express");
+const mongoose = require("mongoose");
 const bodyParser = require('body-parser');
 const path = require('path');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 
 //Connexion à la base de donnée
-mongoose.connect('mongodb://localhost/projet10').then(() => {
+mongoose.connect('mongodb://localhost/projet10', { useNewUrlParser: true }).then(() => {
 	console.log('Connected to mongoDB')
 }).catch(e => {
 	console.log('Error while DB connecting');
-console.log(e);
+	console.log(e);
 });
 
 //On définit notre objet express nommé app
@@ -33,7 +33,7 @@ app.use(session({
 	secret: 'MERRYCHRISTMAS',
 	resave: false,
 	saveUninitialized: false,
-	store: new MongoStore({mongooseConnection: mongoose.connection })
+	store: new MongoStore({ mongooseConnection: mongoose.connection })
 }));
 
 app.use(urlencodedParser);

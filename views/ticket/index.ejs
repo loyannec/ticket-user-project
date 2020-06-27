@@ -1,47 +1,64 @@
 <!DOCTYPE html>
 <html lang="fr">
-    <%- include('../shared/head', {css: ['index', 'navbar']}) %>
-    <body>
-        <%- include('../shared/navbar', {}) %>
-        <div>
-            <h1>Liste des tickets</h1>
-            <table>
-                <thead>
-                    <tr>
-                        <th class="idTicket">Tichet Title</th>
-                        <th class="status">Tichet Ststus</th>
-                        <th class="showTicket">Assigned </th>
-                        <th class="showTicket">Voir Ticket</th>
-                        <!-- <th class="editTicket">Editer Ticket</th> -->
-                    </tr>
-                </thead>
-                <tbody>
-                    <% for (index = 0; index < tickets.length; index++) { %>
-                        <% const ticket = tickets[index] %>
-                        <tr key={index}>
-                            <td><%= ticket.title %></td>
-                            <td><% if(ticket.completed){ %><img src="/images/completed.png" style="width:20px;" alt="true"><% }else { %><img src="/images/open.jpg" style="width:40px;" alt="false"><% } %></td>
-                            <td>
-                                <% if(user[0].isAdmin){ %>
-                                    <% if(ticket.responsible){ %>
-                                        <%= ticket.responsible %>
-                                    <% }else{ %>
-                                        <a href="/ticket/<%= ticket._id %>/approve" class="nav-link"><button>Approve</button></a>
-                                    <% } %>
-                                <% }else{ %>
-                                    <% if(ticket.responsible){ %>
-                                        <%= ticket.responsible %>
-                                    <% }else{ %>
-                                        Pending
-                                    <% } %>
+<%- include('../shared/head', {css: ['index', 'navbar']}) %>
+
+<body>
+    <%- include('../shared/navbar', {}) %>
+    <div>
+        <h1>Liste des tickets</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th class="idTicket">Tichet Title</th>
+                    <th class="status">Tichet Ststus</th>
+                    <th class="showTicket">Assigned </th>
+                    <th class="showTicket">Voir/Edit Ticket</th>
+                    <!-- <th class="editTicket">Editer Ticket</th> -->
+                </tr>
+            </thead>
+            <tbody>
+                <% for (index = 0; index < tickets.length; index++) { %>
+                <% const ticket = tickets[index] %>
+                <tr key={index}>
+                    <td><%= ticket.title %></td>
+                    <td><% if(ticket.completed){ %><img src="/images/completed.png" style="width:20px;"
+                            alt="true"><% }else { %><img src="/images/open.jpg" style="width:40px;" alt="false"><% } %>
+                    </td>
+                    <td>
+                        <% if(user[0].isAdmin){ %>
+                        <% if(ticket.responsible){ %>
+                        <%= ticket.responsible %>
+                        <% }else{ %>
+                        <form method="POST" action="/ticket/<%= ticket._id %>/assign">
+                            <select name="responsible" id="responsible">
+                                <% for (i = 0; i < usernames.length; i++) { %>
+                                <% const userName = usernames[i] %>
+                                <option value=<%= userName.name %>><%= userName.name %></option>
                                 <% } %>
-                            </td>
-                            <td><a href="/ticket/<%= ticket._id %>" class="nav-link">Voir</a></td>
-                            <<!-- td><a href="/ticket/<%= ticket._id %>/edit" class="nav-link">Editer</a></td> -->
-                        </tr>
-                    <% } %>
-                </tbody>
-            </table>
-        </div>
-    </body>
+                            </select>
+                            <button type="submit">Assign</button>
+                        </form>
+                        <% } %>
+                        <% }else{ %>
+                        <% if(ticket.responsible){ %>
+                        <%= ticket.responsible %>
+                        <% }else{ %>
+                        Hanging
+                        <% } %>
+                        <% } %>
+                    </td>
+                    <td>
+                        <% if(ticket.responsible == user[0].name){ %>
+                        <a href="/ticket/<%= ticket._id %>/edit" class="nav-link">Editer</a>
+                        <% }else{ %>
+                        <a href="/ticket/<%= ticket._id %>" class="nav-link">Voir</a>
+                        <% } %>
+                    </td>
+                </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+</body>
+
 </html>

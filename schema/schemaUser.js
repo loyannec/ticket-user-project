@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const config = require('../config/config');
 
 var userSchema = mongoose.Schema({
-	name:{
+	name: {
 		type: String,
 		required: true
 	},
@@ -15,29 +15,29 @@ var userSchema = mongoose.Schema({
 		required: true
 	},
 	password: {
-        type: String,
-        required: true
+		type: String,
+		required: true
 	},
 	isAdmin: {
-		type:Boolean,
-		required:false,
-	} 
-},{ timestamps: { createdAt: 'created_at' }})
+		type: Boolean,
+		required: false,
+	}
+}, { timestamps: { createdAt: 'created_at' } })
 
 
 userSchema.methods = {
 	authenticate: function (password) {
-		return password === this.password;
+		return password === this.hashedPassword;
 	},
 	getToken: function () {
-		return jwt.sign({email: this.email}, config.secret, {expiresIn: '1d'});
+		return jwt.sign({ email: this.email }, config.secret, { expiresIn: '1d' });
 	},
-	checkAdmin: function(){
+	checkAdmin: function () {
 		console.log("***********inside checkadmin function")
-		if(this.isAdmin){
+		if (this.isAdmin) {
 			return true;
 		}
-		else{
+		else {
 			return false;
 		}
 	}

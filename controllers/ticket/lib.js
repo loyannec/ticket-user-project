@@ -1,7 +1,7 @@
 const Ticket = require('../../schema/schemaTicket.js');
 const User = require('../../schema/schemaUser.js');
+
 function create(req, res) {
-	console.log("**********Inside create method************")
 	if (!req.body.description || !req.body.priority || !req.user.email) {
 		res.status(400).json({
 			"text": "Requête invalide"
@@ -29,12 +29,10 @@ function create(req, res) {
 }
 
 function createForm(req, res) {
-	console.log("**********Inside createForm method************")
 	res.status(200).render('ticket/create', { title: 'Créer ticket' });
 }
 
 function show(req, res) {
-	console.log("**********Inside show method************")
 	if (!req.params.id) {
 		res.status(400).json({
 			"text": "Requête invalide"
@@ -83,7 +81,6 @@ function show(req, res) {
 }
 
 function edit(req, res) {
-	console.log("**********Inside edit method************")
 	if (!req.params.id) {
 		res.status(400).json({
 			"text": "Requête invalide"
@@ -127,7 +124,6 @@ function edit(req, res) {
 }
 
 function update(req, res) {
-	console.log("**********Inside update method************")
 	console.log(req.body);
 	if (!req.params.id || !req.body.description || !req.body.priority) {
 		res.status(400).json({
@@ -174,7 +170,6 @@ function update(req, res) {
 }
 
 function list(req, res) {
-	console.log("**********Inside list method************" + JSON.stringify(req.user.email))
 	var checkUser = new Promise(function (resolve, reject) {
 		User.find({ email: req.user.email }, function (err, user) {
 			if (err) {
@@ -190,9 +185,8 @@ function list(req, res) {
 	})
 
 	checkUser.then(function (user) {
-		console.log("********" + JSON.stringify(user) + user[0].isAdmin)
 		var findTicket = new Promise(function (resolve, reject) {
-			Ticket.find({}, function (err, tickets) {
+			Ticket.find({}).sort({ completed: 1 }).lean().exec((err, tickets) => {
 				if (err) {
 					reject(500);
 				} else {
@@ -206,7 +200,6 @@ function list(req, res) {
 		})
 
 		findTicket.then(function (tickets) {
-			console.log("****Retrieve username values from database****")
 			var userNames = new Promise(function (resolve, reject) {
 				User.find({ isAdmin: false }, { name: 1, _id: 0 }, (err, usernames) => {
 					if (err) {
@@ -221,9 +214,6 @@ function list(req, res) {
 				})
 			});
 			userNames.then(function (usernames) {
-				console.log("******Tickets value**********" + JSON.stringify(tickets))
-				console.log("******usernames value**********" + JSON.stringify(usernames))
-				console.log("******user value**********" + JSON.stringify(user))
 				res.status(200).render('ticket/index', { title: 'Liste des tickets', tickets, usernames, user });
 			}, function (error) {
 				switch (error) {
@@ -281,74 +271,7 @@ function list(req, res) {
 	})
 }
 
-function sort(req, res) {
-	var sortStatus = new Promise(function (resolve, reject) {
-		Ticket.find({}, function (err, tickets) {
-			if (err) {
-				reject(500);
-			} else {
-				if (tickets) {
-					resolve(tickets)
-				} else {
-					reject(200)
-				}
-			}
-		})
-	})
-
-	sortStatus.then(function (tickets) {
-		Ticket.sort({ completed: 1 }, (err, status) => {
-			if (err) {
-				reject(500);
-			} else {
-				if (status) {
-					resolve(status)
-				} else {
-					reject(200)
-				}
-			}
-		})
-
-		res.status(200).render('ticket/index', { title: 'Liste des tickets', tickets, status });
-	}, function (error) {
-		switch (error) {
-			case 500:
-				res.status(500).json({
-					"text": "Erreur interne"
-				})
-				break;
-			case 200:
-				res.status(200).json({
-					"text": "Le ticket n'existe pas"
-				})
-				break;
-			default:
-				res.status(500).json({
-					"text": "Erreur interne"
-				})
-		}
-	}, function (error) {
-		switch (error) {
-			case 500:
-				res.status(500).json({
-					"text": "Erreur interne"
-				})
-				break;
-			case 200:
-				res.status(200).json({
-					"text": "Le ticket n'existe pas"
-				})
-				break;
-			default:
-				res.status(500).json({
-					"text": "Erreur interne"
-				})
-		}
-	})
-}
-
 function assign(req, res) {
-	console.log("**********Inside assign method************")
 	console.log(req.body);
 	var findTicket = new Promise(function (resolve, reject) {
 		Ticket.findByIdAndUpdate(req.params.id, req.body, function (err, result) {
@@ -419,4 +342,3 @@ exports.update = update;
 exports.list = list;
 exports.addComment = addComment;
 exports.assign = assign;
-exports.assign = sort;
